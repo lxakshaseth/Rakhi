@@ -51,9 +51,9 @@ export default function MemoryImage({ src, alt, year, tag, className = '' }: Mem
             </div>
           </div>
 
-          <p className="text-[10px] text-[#f2cb63]/60 tracking-wider">
-            (Replace in <code className="text-[#f2cb63]">public/images/</code>)
-          </p>
+          <div className="flex items-center gap-1 text-[#d4af37]/60 text-[10px] tracking-widest uppercase font-sans">
+            <span>✨ Cherished Moment ✨</span>
+          </div>
         </div>
       )}
 
