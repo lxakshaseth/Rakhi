@@ -16,11 +16,11 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
     format: 'a4',
   });
 
-  const primaryColor = '#5c0d25'; // Maroon
-  const goldColor = '#b8861e'; // Antique Gold
   const darkText = '#1a030b';
+  const sisterNameDisplay = (payload.sisterName || 'Didi').toUpperCase();
+  const brotherNameDisplay = payload.brotherName || 'Akshat';
 
-  // 1. Decorative Border
+  // 1. Decorative Double Gold Border
   doc.setDrawColor(184, 134, 30);
   doc.setLineWidth(1.5);
   doc.rect(10, 10, 190, 277);
@@ -29,68 +29,79 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
   doc.setLineWidth(0.5);
   doc.rect(13, 13, 184, 271);
 
-  // 2. Header Banner
+  // 2. Header Royal Banner
   doc.setFillColor(92, 13, 37);
-  doc.rect(13, 13, 184, 28, 'F');
+  doc.rect(13, 13, 184, 32, 'F');
 
   doc.setTextColor(255, 246, 214);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
-  doc.text('RAKSHA BANDHAN 2026', 105, 24, { align: 'center' });
+  doc.text('RAKSHA BANDHAN 2026', 105, 23, { align: 'center' });
 
-  doc.setFontSize(11);
+  doc.setFontSize(13);
+  doc.setTextColor(242, 203, 99);
+  doc.text(`OFFICIAL DEMAND INVOICE OF: ${sisterNameDisplay}`, 105, 31, { align: 'center' });
+
+  doc.setFontSize(9);
+  doc.setTextColor(255, 246, 214);
   doc.setFont('helvetica', 'normal');
-  doc.text("Official Sister Gift Demands & Ceremony Invoice", 105, 33, { align: 'center' });
+  doc.text("Legally Bonded by Sibling Court & Eternal Sacred Promises", 105, 39, { align: 'center' });
 
-  // 3. Parties & Date Info Box
-  let y = 50;
+  // 3. Prominent User & Party Identification Box
+  let y = 52;
   doc.setDrawColor(212, 175, 55);
   doc.setFillColor(254, 253, 247);
-  doc.roundedRect(20, y, 170, 26, 3, 3, 'FD');
+  doc.roundedRect(20, y, 170, 30, 3, 3, 'FD');
 
   doc.setTextColor(darkText);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.text(`Sister (Claimant):`, 25, y + 8);
+  doc.text(`Claimant / Sister Name:`, 25, y + 8);
+  doc.setFontSize(11);
+  doc.setTextColor(153, 27, 27); // Deep Red
+  doc.text(`${payload.sisterName || 'Didi'} (Verified User)`, 72, y + 8);
+
+  doc.setTextColor(darkText);
+  doc.setFontSize(10);
+  doc.text(`Payee / Brother:`, 25, y + 16);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${payload.sisterName}`, 60, y + 8);
+  doc.text(`${brotherNameDisplay}`, 72, y + 16);
 
   doc.setFont('helvetica', 'bold');
-  doc.text(`Brother (Payee):`, 110, y + 8);
+  doc.text(`Submission Timestamp:`, 25, y + 24);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${payload.brotherName}`, 145, y + 8);
+  doc.text(`${new Date(payload.submittedAt).toLocaleString('en-IN')}`, 72, y + 24);
 
+  // Status Badge
+  doc.setFillColor(220, 252, 231);
+  doc.roundedRect(128, y + 6, 56, 18, 2, 2, 'FD');
+  doc.setTextColor(22, 101, 52);
   doc.setFont('helvetica', 'bold');
-  doc.text(`Submission Date:`, 25, y + 18);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`${new Date(payload.submittedAt).toLocaleString('en-IN')}`, 60, y + 18);
-
-  doc.setFont('helvetica', 'bold');
-  doc.text(`Ceremony Status:`, 110, y + 18);
-  doc.setTextColor(22, 101, 52); // Green
-  doc.text(`100% Completed & Verified`, 145, y + 18);
+  doc.setFontSize(8.5);
+  doc.text('CEREMONY STATUS:', 156, y + 12, { align: 'center' });
+  doc.text('100% COMPLETED', 156, y + 18, { align: 'center' });
 
   // 4. Ritual Certification Table
-  y += 36;
+  y += 38;
   doc.setTextColor(92, 13, 37);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.text('1. Sacred Ceremony Milestones', 20, y);
+  doc.setFontSize(12);
+  doc.text('1. Sacred Ceremony Milestones Performed', 20, y);
 
-  y += 6;
+  y += 5;
   doc.setFillColor(245, 235, 210);
   doc.rect(20, y, 170, 7, 'F');
   doc.setTextColor(darkText);
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.setFont('helvetica', 'bold');
-  doc.text('Ritual', 25, y + 5);
-  doc.text('Status', 100, y + 5);
-  doc.text('Blessings', 140, y + 5);
+  doc.text('Ritual Step', 25, y + 5);
+  doc.text('Performed By User', 95, y + 5);
+  doc.text('Sacred Blessing', 140, y + 5);
 
   const rituals = [
-    { name: 'Sacred Tilak & Akshat', status: 'Applied with Pure Kumkum', blessing: 'Long Life & Joy' },
-    { name: 'Devotional Aarti Orbit', status: 'Successfully Revolving Diya', blessing: 'Negative Energies Warded' },
-    { name: 'Sacred Rakhi Tying', status: 'Tied Securely on Wrist', blessing: 'Eternal Brotherly Bond' },
+    { name: 'Sacred Tilak & Akshat', status: `${payload.sisterName} applied kumkum & rice`, blessing: 'Long Life & Joy' },
+    { name: 'Devotional Aarti Orbit', status: `${payload.sisterName} completed Diya rotation`, blessing: 'Auspicious Protection' },
+    { name: 'Sacred Rakhi Tying', status: `${payload.sisterName} tied thread on wrist`, blessing: 'Eternal Brotherly Bond' },
   ];
 
   y += 7;
@@ -101,7 +112,7 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
     }
     doc.setFont('helvetica', 'normal');
     doc.text(r.name, 25, y + 4.5);
-    doc.text(r.status, 100, y + 4.5);
+    doc.text(r.status, 95, y + 4.5);
     doc.text(r.blessing, 140, y + 4.5);
     y += 6;
   });
@@ -110,18 +121,18 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
   y += 8;
   doc.setTextColor(92, 13, 37);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.text("2. Didi's Approved Gift Demands", 20, y);
+  doc.setFontSize(12);
+  doc.text(`2. Selected Gift Demands by ${payload.sisterName}`, 20, y);
 
-  y += 6;
+  y += 5;
   doc.setFillColor(245, 235, 210);
   doc.rect(20, y, 170, 7, 'F');
   doc.setTextColor(darkText);
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.setFont('helvetica', 'bold');
   doc.text('Category', 25, y + 5);
-  doc.text('Selected Item / Demand', 75, y + 5);
-  doc.text('Obligation Status', 145, y + 5);
+  doc.text('Selected Item / Demand', 80, y + 5);
+  doc.text('Settlement Obligation', 145, y + 5);
 
   y += 7;
   const entries = Object.entries(payload.selectedGifts);
@@ -139,11 +150,11 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
       doc.setFont('helvetica', 'bold');
       doc.text(cat.toUpperCase(), 25, y + 4.5);
       doc.setFont('helvetica', 'normal');
-      doc.text(String(val), 75, y + 4.5);
+      doc.text(String(val), 80, y + 4.5);
       doc.setTextColor(180, 83, 9);
       doc.text('Payable by Brother', 145, y + 4.5);
       doc.setTextColor(darkText);
-      y += 6.5;
+      y += 6;
     });
 
     if (payload.customDemand && payload.customDemand.trim()) {
@@ -152,11 +163,11 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
       doc.setFont('helvetica', 'bold');
       doc.text('CUSTOM WISH', 25, y + 5);
       doc.setFont('helvetica', 'normal');
-      doc.text(payload.customDemand.trim(), 75, y + 5);
+      doc.text(payload.customDemand.trim(), 80, y + 5);
       doc.setTextColor(180, 83, 9);
       doc.text('High Priority ⭐', 145, y + 5);
       doc.setTextColor(darkText);
-      y += 8;
+      y += 7;
     }
   }
 
@@ -172,7 +183,7 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
   doc.setFontSize(8);
   doc.setTextColor(70, 70, 70);
   const terms = [
-    '1. As determined by the Sibling Quiz, Didi holds the undisputed Lifetime Trophy as the House Queen.',
+    `1. ${payload.sisterName} holds the official Lifetime Trophy as the House Queen with 100% immunity.`,
     '2. The Brother is strictly prohibited from arguing, canceling food orders, or claiming remote control.',
     '3. All selected gifts, shopping carts, and cash amounts must be settled promptly with zero deductions.',
     '4. This digital certificate is bonded with eternal love, memories, and sacred Rakhi promises.',
@@ -184,7 +195,7 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
   });
 
   // 7. Signature & Seal
-  y += 8;
+  y += 7;
   doc.setDrawColor(212, 175, 55);
   doc.setLineWidth(0.5);
   doc.line(20, y, 80, y);
@@ -193,10 +204,9 @@ export function generateRakhiPdf(payload: DemandPayload): Buffer {
   doc.setFontSize(9);
   doc.setTextColor(darkText);
   doc.setFont('helvetica', 'bold');
-  doc.text("Didi's Digital Signature", 50, y + 5, { align: 'center' });
-  doc.text("Brother's Acceptance", 160, y + 5, { align: 'center' });
+  doc.text(`${payload.sisterName}'s Digital Signature`, 50, y + 5, { align: 'center' });
+  doc.text(`${brotherNameDisplay}'s Acceptance`, 160, y + 5, { align: 'center' });
 
-  // Output as Buffer
   const arrayBuffer = doc.output('arraybuffer');
   return Buffer.from(arrayBuffer);
 }
@@ -205,6 +215,7 @@ export async function sendRakhiPdfEmail(payload: DemandPayload): Promise<{ succe
   const user = process.env.EMAIL_USER;
   const pass = process.env.EMAIL_PASS;
   const recipient = process.env.RECIPIENT_EMAIL || 'lxakshatseth90@gmail.com';
+  const sister = payload.sisterName || 'Didi';
 
   if (!user || !pass) {
     throw new Error('Email credentials (EMAIL_USER, EMAIL_PASS) not configured in .env');
@@ -219,24 +230,27 @@ export async function sendRakhiPdfEmail(payload: DemandPayload): Promise<{ succe
   });
 
   const pdfBuffer = generateRakhiPdf(payload);
+  const safeFilename = `Rakhi_Demands_${sister.replace(/[^a-zA-Z0-9_-]/g, '_')}_2026.pdf`;
 
   const mailOptions = {
     from: `"Rakhi Surprise Vault" <${user}>`,
     to: recipient,
-    subject: `🎁 [Rakhi 2026] Didi's Official Gift Demands & Ceremony Invoice! ❤️`,
+    subject: `🎁 [Rakhi 2026] ${sister}'s Official Gift Demands & Ceremony Invoice! ❤️`,
     html: `
       <div style="font-family: Arial, sans-serif; background-color: #120207; color: #fbf6ea; padding: 25px; border-radius: 12px; max-width: 600px; margin: auto; border: 1px solid #d4af37;">
         <h1 style="color: #ffd700; text-align: center; font-size: 24px; margin-bottom: 5px;">👑 Raksha Bandhan 2026</h1>
-        <p style="text-align: center; color: #f4ebd2; font-size: 14px; margin-top: 0;">Official Digital Gift Demand & Ritual Certification</p>
+        <p style="text-align: center; color: #f4ebd2; font-size: 15px; margin-top: 0; font-weight: bold;">
+          Official Demand Report for: <span style="color: #ffd700;">${sister}</span>
+        </p>
         <hr style="border: 0; height: 1px; background: #d4af37; margin: 20px 0;" />
         
         <p style="font-size: 16px;">Hey <strong>${payload.brotherName}</strong>,</p>
         <p style="font-size: 14px; line-height: 1.6;">
-          Your sister <strong>${payload.sisterName}</strong> has just completed the interactive Rakhi ceremony (Tilak, Aarti &amp; Rakhi tying) and finalized her official gift demands!
+          Your sister <strong style="color: #ffd700; font-size: 16px;">${sister}</strong> has successfully completed the digital Rakhi ceremony and finalized her official demands!
         </p>
 
         <div style="background-color: #2b0612; border: 1px solid #d4af37; padding: 15px; border-radius: 8px; margin: 15px 0;">
-          <h3 style="color: #ffd700; margin-top: 0;">📋 Quick Demands Summary:</h3>
+          <h3 style="color: #ffd700; margin-top: 0;">📋 Demands Submitted by ${sister}:</h3>
           <ul style="padding-left: 20px; line-height: 1.8; color: #fff8e7;">
             ${Object.entries(payload.selectedGifts).map(([k, v]) => `<li><strong>${k.toUpperCase()}:</strong> ${v}</li>`).join('')}
             ${payload.customDemand ? `<li style="color: #fb7185;"><strong>SPECIAL WISH:</strong> ${payload.customDemand}</li>` : ''}
@@ -244,17 +258,17 @@ export async function sendRakhiPdfEmail(payload: DemandPayload): Promise<{ succe
         </div>
 
         <p style="font-size: 13px; color: #e8d7ae;">
-          📎 <strong>Attached:</strong> Complete official legal PDF invoice (<code>Rakhi_Demands_Didi_2026.pdf</code>) with all ritual timestamps and signed terms.
+          📎 <strong>Attached:</strong> Official legal PDF invoice (<code>${safeFilename}</code>) registered in the name of <strong>${sister}</strong>.
         </p>
         
         <p style="margin-top: 25px; font-size: 14px; text-align: center; color: #ffd700;">
-          Wishing you both a very Happy Raksha Bandhan! ❤️🪢
+          Wishing ${sister} and you a very Happy Raksha Bandhan! ❤️🪢
         </p>
       </div>
     `,
     attachments: [
       {
-        filename: `Rakhi_Demands_${payload.sisterName}_2026.pdf`,
+        filename: safeFilename,
         content: pdfBuffer,
         contentType: 'application/pdf',
       },
