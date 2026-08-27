@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SceneId } from '@/types';
 import ParticleCanvas from '@/components/common/ParticleCanvas';
+import TouchSparkles from '@/components/common/TouchSparkles';
 import MusicController from '@/components/common/MusicController';
 import ProgressBar from '@/components/common/ProgressBar';
 import LoadingScreen from '@/components/common/LoadingScreen';
@@ -51,6 +52,9 @@ export default function RakhiSurprisePage() {
     <main className="relative min-h-[100dvh] w-full bg-[#0d0104] text-[#fbf6ea] overflow-x-hidden flex flex-col items-center justify-center">
       {/* Universal Floating Particle & Petal Canvas */}
       <ParticleCanvas />
+
+      {/* Interactive Tap & Touch Magic Sparkles */}
+      <TouchSparkles />
 
       {/* Floating Story Progress Bar */}
       <ProgressBar currentScene={currentScene} />

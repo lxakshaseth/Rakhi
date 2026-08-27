@@ -57,9 +57,7 @@ class SoundEngine {
 
       osc.start();
       osc.stop(ctx.currentTime + 0.09);
-    } catch {
-      // Audio context might be restricted before interaction
-    }
+    } catch {}
   }
 
   // 2. Envelope Unfold / Whoosh
@@ -135,7 +133,6 @@ class SoundEngine {
       const ctx = this.getContext();
       if (!ctx) return;
 
-      // Authentic bell harmonics: Fundamental (784Hz - G5), Octave (1568Hz), Tierce (932Hz), Quint (1174Hz)
       const harmonics = [
         { freq: 783.99, gainRatio: 0.25, decay: 2.2 },
         { freq: 1174.66, gainRatio: 0.15, decay: 1.8 },
@@ -170,7 +167,6 @@ class SoundEngine {
       const ctx = this.getContext();
       if (!ctx) return;
 
-      // Indian Raag / Major celebratory chord: D, F#, A, D6
       const chord = [587.33, 739.99, 880.0, 1174.66];
       chord.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
@@ -199,7 +195,6 @@ class SoundEngine {
       const ctx = this.getContext();
       if (!ctx) return;
 
-      // Pop bass
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
@@ -214,20 +209,41 @@ class SoundEngine {
       osc.start();
       osc.stop(ctx.currentTime + 0.16);
 
-      // Followed by sparkle
       setTimeout(() => {
         this.playSparkle();
       }, 100);
     } catch {}
   }
 
-  // 7. Ambient Generative Chimes (For continuous emotional background if no MP3)
+  // 7. Pop / Pluck for Heart shower & micro-interactions
+  public playHeartPop() {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520 + Math.random() * 200, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.11);
+    } catch {}
+  }
+
+  // 8. Ambient Generative Soundscape
   private ambientInterval: number | null = null;
 
   public startAmbientSoundscape() {
     if (typeof window === 'undefined' || this.ambientInterval) return;
     
-    // Play subtle soft chimes every 4-7 seconds
     const pentatonicScale = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5];
     
     const playChime = () => {
