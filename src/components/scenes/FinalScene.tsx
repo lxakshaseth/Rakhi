@@ -10,6 +10,7 @@ import { jsPDF } from 'jspdf';
 
 interface FinalSceneProps {
   onReplay: () => void;
+  sisterName?: string;
 }
 
 interface FloatingHeart {
@@ -18,7 +19,8 @@ interface FloatingHeart {
   size: number;
 }
 
-export default function FinalScene({ onReplay }: FinalSceneProps) {
+export default function FinalScene({ onReplay, sisterName }: FinalSceneProps) {
+  const activeName = sisterName || rakhiConfig.sisterName;
   const [heartCount, setHeartCount] = useState(1);
   const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
   const [activePromiseIndex, setActivePromiseIndex] = useState<number | null>(null);
@@ -136,7 +138,7 @@ export default function FinalScene({ onReplay }: FinalSceneProps) {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(32);
       doc.setTextColor(184, 134, 30);
-      doc.text(rakhiConfig.sisterName.toUpperCase(), 148, 78, { align: 'center' });
+      doc.text(activeName.toUpperCase(), 148, 78, { align: 'center' });
 
       doc.setTextColor(35, 10, 18);
       doc.setFont('times', 'normal');
@@ -166,7 +168,7 @@ export default function FinalScene({ onReplay }: FinalSceneProps) {
       doc.text(`${rakhiConfig.brotherName} (Brother)`, 75, 168, { align: 'center' });
       doc.text('The Sibling Court of Honor', 220, 168, { align: 'center' });
 
-      doc.save(`Best_Sister_Certificate_${rakhiConfig.sisterName}_2026.pdf`);
+      doc.save(`Best_Sister_Certificate_${activeName}_2026.pdf`);
     } catch {
       // Graceful handling
     }
@@ -218,7 +220,7 @@ export default function FinalScene({ onReplay }: FinalSceneProps) {
             <div className="w-full h-full rounded-full bg-gradient-to-br from-[#991b1b] via-[#dc2626] to-[#7f1d1d] flex flex-col items-center justify-center text-center p-2">
               <Heart className="w-7 h-7 text-white fill-white animate-pulse" />
               <span className="font-heading text-[10px] font-bold text-[#fef08a] uppercase tracking-wider mt-1">
-                Didi &amp; {rakhiConfig.brotherName}
+                {activeName} &amp; {rakhiConfig.brotherName}
               </span>
             </div>
           </div>
@@ -235,7 +237,7 @@ export default function FinalScene({ onReplay }: FinalSceneProps) {
             {rakhiConfig.finale.title}
           </h2>
           <p className="font-script text-2xl sm:text-3xl text-[#fda4af]">
-            {rakhiConfig.finale.subtitle}
+            Happy Raksha Bandhan, {activeName}! ❤️
           </p>
           <p className="text-xs text-[#e8d7ae]/80 font-sans max-w-xs mx-auto">
             {rakhiConfig.finale.tagline}

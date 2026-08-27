@@ -9,10 +9,12 @@ import { triggerGoldBurst } from '@/components/common/ConfettiFireworks';
 
 interface EnvelopeSceneProps {
   onOpen: () => void;
+  sisterName?: string;
 }
 
-export default function EnvelopeScene({ onOpen }: EnvelopeSceneProps) {
+export default function EnvelopeScene({ onOpen, sisterName }: EnvelopeSceneProps) {
   const [isOpening, setIsOpening] = useState(false);
+  const activeName = sisterName || rakhiConfig.sisterName;
   const [isOpened, setIsOpened] = useState(false);
 
   const handleOpenEnvelope = () => {
@@ -82,7 +84,7 @@ export default function EnvelopeScene({ onOpen }: EnvelopeSceneProps) {
                 >
                   <Sparkles className="w-5 h-5 text-[#b8861e] animate-spin mb-1" />
                   <p className="font-script text-2xl text-[#6b1428] font-bold">
-                    For my wonderful Sister...
+                    For my wonderful {activeName}...
                   </p>
                   <p className="text-[11px] text-[#4a2608] tracking-widest uppercase font-sans mt-1">
                     Unfolding memories ✨

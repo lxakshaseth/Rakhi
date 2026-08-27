@@ -9,9 +9,11 @@ import { triggerGoldBurst, triggerSideCannons } from '@/components/common/Confet
 
 interface GiftBoxProps {
   onNext: () => void;
+  sisterName?: string;
 }
 
-export default function GiftBox({ onNext }: GiftBoxProps) {
+export default function GiftBox({ onNext, sisterName }: GiftBoxProps) {
+  const activeName = sisterName || rakhiConfig.sisterName;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -78,7 +80,7 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sisterName: rakhiConfig.sisterName,
+          sisterName: activeName,
           brotherName: rakhiConfig.brotherName,
           selectedGifts: selectedDemands,
           customDemand: customWish,

@@ -8,9 +8,11 @@ import { sounds } from '@/utils/soundEffects';
 
 interface FinalLetterProps {
   onNext: () => void;
+  sisterName?: string;
 }
 
-export default function FinalLetter({ onNext }: FinalLetterProps) {
+export default function FinalLetter({ onNext, sisterName }: FinalLetterProps) {
+  const activeName = sisterName || rakhiConfig.sisterName;
   const [revealedParagraphs, setRevealedParagraphs] = useState<number>(0);
   const letter = rakhiConfig.finalLetter;
 
@@ -77,7 +79,7 @@ export default function FinalLetter({ onNext }: FinalLetterProps) {
             className="mb-4"
           >
             <h3 className="font-script text-3xl sm:text-4xl text-[#5c0d25] font-bold">
-              {letter.salutation}
+              Dearest {activeName},
             </h3>
           </motion.div>
 

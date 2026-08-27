@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SceneId } from '@/types';
+import { rakhiConfig } from '@/data/rakhiConfig';
 import ParticleCanvas from '@/components/common/ParticleCanvas';
 import TouchSparkles from '@/components/common/TouchSparkles';
 import MusicController from '@/components/common/MusicController';
@@ -22,6 +23,7 @@ import FinalScene from '@/components/scenes/FinalScene';
 
 export default function RakhiSurprisePage() {
   const [currentScene, setCurrentScene] = useState<SceneId>('intro');
+  const [sisterName, setSisterName] = useState<string>(rakhiConfig.sisterName || 'Didi');
   const [isMusicPlaying, setIsMusicPlaying] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -29,12 +31,13 @@ export default function RakhiSurprisePage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1400);
+    }, 1200);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const handleStartExperience = () => {
+  const handleStartExperience = (enteredName: string) => {
+    setSisterName(enteredName || 'Didi');
     setIsMusicPlaying(true);
     setCurrentScene('envelope');
   };
@@ -77,7 +80,10 @@ export default function RakhiSurprisePage() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="w-full min-h-[100dvh] flex flex-col"
             >
-              <IntroScene onStart={handleStartExperience} />
+              <IntroScene
+                defaultName={sisterName}
+                onStart={handleStartExperience}
+              />
             </motion.div>
           )}
 
@@ -90,7 +96,10 @@ export default function RakhiSurprisePage() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="w-full min-h-[100dvh] flex flex-col"
             >
-              <EnvelopeScene onOpen={() => setCurrentScene('timeline')} />
+              <EnvelopeScene
+                sisterName={sisterName}
+                onOpen={() => setCurrentScene('timeline')}
+              />
             </motion.div>
           )}
 
@@ -129,7 +138,10 @@ export default function RakhiSurprisePage() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="w-full min-h-[100dvh] flex flex-col"
             >
-              <SiblingQuiz onNext={() => setCurrentScene('emotional')} />
+              <SiblingQuiz
+                sisterName={sisterName}
+                onNext={() => setCurrentScene('emotional')}
+              />
             </motion.div>
           )}
 
@@ -155,7 +167,10 @@ export default function RakhiSurprisePage() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="w-full min-h-[100dvh] flex flex-col"
             >
-              <GiftBox onNext={() => setCurrentScene('letter')} />
+              <GiftBox
+                sisterName={sisterName}
+                onNext={() => setCurrentScene('letter')}
+              />
             </motion.div>
           )}
 
@@ -168,7 +183,10 @@ export default function RakhiSurprisePage() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="w-full min-h-[100dvh] flex flex-col"
             >
-              <FinalLetter onNext={() => setCurrentScene('finale')} />
+              <FinalLetter
+                sisterName={sisterName}
+                onNext={() => setCurrentScene('finale')}
+              />
             </motion.div>
           )}
 
@@ -181,7 +199,10 @@ export default function RakhiSurprisePage() {
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               className="w-full min-h-[100dvh] flex flex-col"
             >
-              <FinalScene onReplay={handleReplay} />
+              <FinalScene
+                sisterName={sisterName}
+                onReplay={handleReplay}
+              />
             </motion.div>
           )}
         </AnimatePresence>

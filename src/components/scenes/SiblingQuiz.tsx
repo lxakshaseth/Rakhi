@@ -9,9 +9,11 @@ import { triggerGoldBurst } from '@/components/common/ConfettiFireworks';
 
 interface SiblingQuizProps {
   onNext: () => void;
+  sisterName?: string;
 }
 
-export default function SiblingQuiz({ onNext }: SiblingQuizProps) {
+export default function SiblingQuiz({ onNext, sisterName }: SiblingQuizProps) {
+  const activeName = sisterName || rakhiConfig.sisterName;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [currentReaction, setCurrentReaction] = useState<string | null>(null);
@@ -160,10 +162,10 @@ export default function SiblingQuiz({ onNext }: SiblingQuizProps) {
 
               <div className="space-y-2">
                 <span className="text-xs uppercase tracking-widest text-[#d4af37] font-semibold bg-[#d4af37]/20 px-3 py-1 rounded-full border border-[#d4af37]/40">
-                  {rakhiConfig.quiz.result.badgeText}
+                  Certified Best Sister Ever
                 </span>
                 <h3 className="font-royal text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-[#ffe699] via-[#f7df99] to-[#d4af37] font-bold">
-                  {rakhiConfig.quiz.result.winnerTitle}
+                  {activeName.toUpperCase()} WINS THE LIFETIME TROPHY! 🏆
                 </h3>
                 <p className="text-xs text-[#e8d7ae]/80 font-sans">
                   {rakhiConfig.quiz.result.winnerSubtitle}
