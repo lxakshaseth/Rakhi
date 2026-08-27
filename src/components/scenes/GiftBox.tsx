@@ -124,50 +124,37 @@ export default function GiftBox({ onNext, sisterName }: GiftBoxProps) {
           </p>
         </motion.div>
 
-        {/* 3D Royal Gift Box */}
-        <div className="relative w-60 sm:w-68 h-56 sm:h-64 my-1 flex items-center justify-center [perspective:1000px]">
-          {isOpen && (
+        {/* 3D Royal Gift Box (Shown before opening) */}
+        {!isOpen && (
+          <div className="relative w-60 sm:w-68 h-56 sm:h-64 my-1 flex items-center justify-center [perspective:1000px]">
             <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [1, 1.4, 1.2], opacity: [0.8, 1, 0.9] }}
-              transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-              className="absolute -inset-10 rounded-full bg-[radial-gradient(circle,#ffd700_0%,#dc2626_40%,transparent_70%)] blur-2xl pointer-events-none opacity-60"
-            />
-          )}
-
-          <motion.div
-            animate={isAnimating ? { rotate: [-2, 2, -4, 4, 0], scale: [1, 1.05, 1] } : {}}
-            transition={{ duration: 0.8 }}
-            className="relative w-44 sm:w-52 h-44 sm:h-52 flex items-end justify-center"
-          >
-            {/* Box Body */}
-            <div className="relative w-full h-32 rounded-2xl bg-gradient-to-b from-[#5c0d25] via-[#420a1c] to-[#25040f] gold-border shadow-2xl overflow-hidden flex items-center justify-center">
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:12px_12px]" />
-              <div className="w-8 h-full bg-gradient-to-r from-[#b8861e] via-[#ffd700] to-[#b8861e] shadow-md border-x border-[#fae19c]/40" />
-              <div className="absolute inset-x-0 h-8 bg-gradient-to-b from-[#b8861e] via-[#ffd700] to-[#b8861e] shadow-md border-y border-[#fae19c]/40" />
-            </div>
-
-            {/* Box Lid with Pop */}
-            <motion.div
-              animate={
-                isOpen
-                  ? { y: -70, rotate: -18, opacity: 0.9, scale: 1.05 }
-                  : isAnimating
-                  ? { y: -10, rotate: 3 }
-                  : { y: 0, rotate: 0 }
-              }
-              transition={{ duration: 0.7, ease: 'easeOut' }}
-              className="absolute top-4 inset-x-0 mx-auto w-[105%] h-12 rounded-xl bg-gradient-to-b from-[#73102f] to-[#4d0b1f] gold-border shadow-xl flex items-center justify-center z-30"
+              animate={isAnimating ? { rotate: [-2, 2, -4, 4, 0], scale: [1, 1.05, 1] } : {}}
+              transition={{ duration: 0.8 }}
+              className="relative w-44 sm:w-52 h-44 sm:h-52 flex items-end justify-center"
             >
-              <div className="absolute -top-6 flex items-center justify-center">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#ffd700] to-[#b8861e] -rotate-45 shadow-md border border-white" />
-                <div className="w-6 h-6 rounded-full bg-gradient-to-tl from-[#ffd700] to-[#b8861e] rotate-45 -ml-2 shadow-md border border-white" />
-                <div className="absolute w-3.5 h-3.5 rounded-full bg-[#fae19c] shadow-inner" />
+              {/* Box Body */}
+              <div className="relative w-full h-32 rounded-2xl bg-gradient-to-b from-[#5c0d25] via-[#420a1c] to-[#25040f] gold-border shadow-2xl overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:12px_12px]" />
+                <div className="w-8 h-full bg-gradient-to-r from-[#b8861e] via-[#ffd700] to-[#b8861e] shadow-md border-x border-[#fae19c]/40" />
+                <div className="absolute inset-x-0 h-8 bg-gradient-to-b from-[#b8861e] via-[#ffd700] to-[#b8861e] shadow-md border-y border-[#fae19c]/40" />
               </div>
-              <div className="w-full h-2.5 bg-gradient-to-r from-[#b8861e] via-[#ffd700] to-[#b8861e]" />
+
+              {/* Box Lid */}
+              <motion.div
+                animate={isAnimating ? { y: -15, rotate: 3 } : { y: 0, rotate: 0 }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
+                className="absolute top-4 inset-x-0 mx-auto w-[105%] h-12 rounded-xl bg-gradient-to-b from-[#73102f] to-[#4d0b1f] gold-border shadow-xl flex items-center justify-center z-30"
+              >
+                <div className="absolute -top-6 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#ffd700] to-[#b8861e] -rotate-45 shadow-md border border-white" />
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-tl from-[#ffd700] to-[#b8861e] rotate-45 -ml-2 shadow-md border border-white" />
+                  <div className="absolute w-3.5 h-3.5 rounded-full bg-[#fae19c] shadow-inner" />
+                </div>
+                <div className="w-full h-2.5 bg-gradient-to-r from-[#b8861e] via-[#ffd700] to-[#b8861e]" />
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
+          </div>
+        )}
 
         {/* Revealed Content: Interactive Mandatory Wishlist Form */}
         <AnimatePresence mode="wait">

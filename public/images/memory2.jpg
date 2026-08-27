@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a081c" />
+      <stop offset="50%" stop-color="#701232" />
+      <stop offset="100%" stop-color="#20040e" />
+    </linearGradient>
+    <radialGradient id="glow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg2)" />
+  <circle cx="300" cy="300" r="230" fill="url(#glow2)" />
+  <circle cx="300" cy="300" r="170" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="4,8" opacity="0.6" />
+  
+  <g transform="translate(300, 260)">
+    <circle cx="0" cy="0" r="60" fill="#8c1639" stroke="#d4af37" stroke-width="3" />
+    <text x="0" y="16" font-size="40" text-anchor="middle">😂</text>
+  </g>
+  
+  <text x="300" y="380" font-family="Georgia, serif" font-size="34" font-weight="bold" fill="#fae19c" text-anchor="middle">2015</text>
+  <text x="300" y="420" font-family="-apple-system, sans-serif" font-size="18" fill="#fef9ee" opacity="0.9" text-anchor="middle">TV Remote &amp; Midnight Food Battles</text>
+  <text x="300" y="450" font-family="-apple-system, sans-serif" font-size="14" fill="#d4af37" opacity="0.8" text-anchor="middle">✨ WWE at Home ✨</text>
+</svg>
