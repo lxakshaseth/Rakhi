@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Gift, Heart, ArrowRight, Check, Send, CheckCircle2, MessageSquare } from 'lucide-react';
+import { Sparkles, Gift, Heart, ArrowRight, Check, CheckCircle2, AlertCircle, MailCheck } from 'lucide-react';
 import { rakhiConfig } from '@/data/rakhiConfig';
 import { sounds } from '@/utils/soundEffects';
 import { triggerGoldBurst, triggerSideCannons } from '@/components/common/ConfettiFireworks';
@@ -15,13 +15,19 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Selected Gifts state
+  // Initialize with all required fields pre-selected
   const [selectedDemands, setSelectedDemands] = useState<Record<string, string>>({
     cash: '₹11,000',
     chocolate: 'Ferrero Rocher Box',
+    shopping: 'Zara Shopping Spree',
+    toy_gadget: 'AirPods / Headphones 🎧',
+    food_treat: 'Midnight Pizza Pass 🍕',
+    vacation: 'Goa Beach Trip 🏖️',
+    immunity: '30-Day No Argument Rule 🤐',
   });
-  const [customWish, setCustomWish] = useState('');
+  const [customWish, setCustomWish] = useState('Lots of love & unlimited food treats ❤️');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
   const demandData = rakhiConfig.giftBox.demandSection;
@@ -40,34 +46,34 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
     }, 800);
   };
 
-  const toggleDemand = (id: string, defaultOption: string) => {
-    sounds.playClick();
-    setSelectedDemands((prev) => {
-      const updated = { ...prev };
-      if (updated[id]) {
-        delete updated[id];
-      } else {
-        updated[id] = defaultOption;
-      }
-      return updated;
-    });
-  };
-
   const selectSubOption = (id: string, opt: string) => {
     sounds.playClick();
+    setErrorMessage(null);
     setSelectedDemands((prev) => ({
       ...prev,
       [id]: opt,
     }));
   };
 
-  const handleSubmitDemands = async () => {
+  const handleSubmitAndProceed = async () => {
+    // Validate that all required standard categories are selected
+    const requiredCategories = demandData.giftDemandsList.filter((item) => !item.isCustom);
+    const missing = requiredCategories.some((cat) => !selectedDemands[cat.id]);
+
+    if (missing) {
+      sounds.playClick();
+      setErrorMessage('⚠️ Didi, all demand categories are mandatory! Please select an option for each item before proceeding.');
+      return;
+    }
+
     setIsSubmitting(true);
+    setErrorMessage(null);
     sounds.playRakhiSuccess();
     triggerGoldBurst();
+    triggerSideCannons();
 
-    // 1. Send to MongoDB API
     try {
+      // 1. Save to MongoDB & automatically dispatch PDF to Brother's Gmail inbox
       await fetch('/api/gift-demand', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,34 +92,10 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
     setIsSaved(true);
     setIsSubmitting(false);
 
-    // 2. Generate WhatsApp share message
-    const lines = Object.entries(selectedDemands).map(([key, val]) => `• ${key.toUpperCase()}: ${val}`);
-    if (customWish.trim()) {
-      lines.push(`• SPECIAL WISH: ${customWish.trim()}`);
-    }
-
-    const waText = encodeURIComponent(
-      `👑 *Official Raksha Bandhan Demand Letter for ${rakhiConfig.brotherName}!* 💌\n\n` +
-      `Hey ${rakhiConfig.brotherName}, I just completed my digital Rakhi ceremony!\n` +
-      `Here are my approved Rakhi gifts this year:\n\n` +
-      lines.join('\n') +
-      `\n\nNo excuses accepted! Payment & deliveries due immediately 😉❤️`
-    );
-
-    const waUrl = rakhiConfig.brotherPhoneNumber
-      ? `https://wa.me/${rakhiConfig.brotherPhoneNumber}?text=${waText}`
-      : `https://wa.me/?text=${waText}`;
-
-    // Open WhatsApp in new tab
-    if (typeof window !== 'undefined') {
-      window.open(waUrl, '_blank');
-    }
-  };
-
-  const handleProceed = () => {
-    sounds.playClick();
-    sounds.playSparkle();
-    onNext();
+    // Proceed to next scene after celebration
+    setTimeout(() => {
+      onNext();
+    }, 1400);
   };
 
   return (
@@ -130,7 +112,7 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
         >
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-maroon gold-border text-xs text-[#d4af37] font-semibold tracking-widest uppercase">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Chapter V • The Gift Vault</span>
+            <span>Chapter V • Mandatory Gift Vault</span>
           </div>
           <h2 className="font-royal text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-b from-[#fff6d6] via-[#f7df99] to-[#d4af37]">
             {rakhiConfig.giftBox.title}
@@ -185,7 +167,7 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
           </motion.div>
         </div>
 
-        {/* Revealed Content: Interactive Wishlist Selector */}
+        {/* Revealed Content: Interactive Mandatory Wishlist Form */}
         <AnimatePresence mode="wait">
           {!isOpen ? (
             <motion.button
@@ -204,7 +186,7 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
               <Sparkles className="w-4 h-4 text-[#1a030b]" />
             </motion.button>
           ) : (
-            /* Interactive Sister Demands Form */
+            /* Interactive Mandatory Wishlist */
             <motion.div
               key="gift-demands"
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -218,57 +200,67 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
                   <Heart className="w-3 h-3 text-[#f87171] fill-[#f87171]" />
                   <span>{demandData.title}</span>
                 </div>
-                <p className="text-xs text-[#e8d7ae]/80 font-sans">
-                  {demandData.subtitle}
+                <p className="text-xs text-[#fae19c] font-sans font-medium">
+                  ⭐ Every field is mandatory — make your choice for each item!
                 </p>
               </div>
+
+              {/* Error Message Toast */}
+              {errorMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="w-full p-2.5 rounded-lg bg-red-950/90 border border-red-500 text-red-200 text-xs font-sans flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                  <span>{errorMessage}</span>
+                </motion.div>
+              )}
 
               {/* Demand Cards List */}
               <div className="w-full flex flex-col gap-3 max-h-[380px] overflow-y-auto pr-1">
                 {demandData.giftDemandsList.map((item) => {
-                  const isChecked = !!selectedDemands[item.id] || (item.isCustom && customWish.length > 0);
+                  const isCustom = item.isCustom;
                   const currentSelected = selectedDemands[item.id];
+                  const hasSelection = isCustom ? customWish.trim().length > 0 : !!currentSelected;
 
                   return (
                     <div
                       key={item.id}
-                      className={`w-full rounded-xl p-3.5 transition-all duration-300 border ${
-                        isChecked
-                          ? 'bg-[#3b0819] border-[#d4af37] shadow-[0_0_12px_rgba(212,175,55,0.2)]'
-                          : 'bg-[#22040e]/80 border-stone-800 hover:border-stone-700'
-                      }`}
+                      className="w-full rounded-xl p-3.5 bg-[#330715] border border-[#d4af37]/40 shadow-sm transition-all"
                     >
-                      {/* Top Row: Title + Toggle Checkbox */}
-                      <div
-                        onClick={() => toggleDemand(item.id, item.options ? item.options[0] : 'Yes')}
-                        className="flex items-center justify-between cursor-pointer select-none"
-                      >
+                      {/* Top Row: Title + Mandatory Badge */}
+                      <div className="flex items-center justify-between select-none">
                         <div className="flex items-center gap-2.5">
                           <span className="text-xl">{item.icon}</span>
                           <div>
-                            <p className="font-heading font-semibold text-sm text-[#fff8e7]">
-                              {item.title}
-                            </p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-heading font-semibold text-sm text-[#fff8e7]">
+                                {item.title}
+                              </p>
+                              <span className="text-[10px] text-red-400 font-bold">* Required</span>
+                            </div>
                             <p className="text-[11px] text-[#e8d7ae]/70 font-sans">
                               {item.description}
                             </p>
                           </div>
                         </div>
 
-                        {/* Checkbox indicator */}
+                        {/* Selected Indicator Badge */}
                         <div
-                          className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
-                            isChecked
-                              ? 'bg-[#d4af37] border-[#fae19c] text-[#1a030b]'
-                              : 'border-stone-600 bg-black/40'
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-sans font-bold flex items-center gap-1 ${
+                            hasSelection
+                              ? 'bg-emerald-950/80 border border-emerald-500 text-emerald-300'
+                              : 'bg-red-950/80 border border-red-500 text-red-300'
                           }`}
                         >
-                          {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          <Check className="w-3 h-3" />
+                          <span>{hasSelection ? 'Selected' : 'Choose'}</span>
                         </div>
                       </div>
 
-                      {/* Sub-options pills if active */}
-                      {isChecked && item.options && (
+                      {/* Sub-options pills (Mandatory selection) */}
+                      {!isCustom && item.options && (
                         <div className="mt-3 pt-2.5 border-t border-[#d4af37]/20 flex flex-wrap gap-1.5">
                           {item.options.map((opt) => (
                             <button
@@ -287,14 +279,17 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
                         </div>
                       )}
 
-                      {/* Custom input for custom wish */}
-                      {item.isCustom && (
+                      {/* Custom input for special wish */}
+                      {isCustom && (
                         <div className="mt-2.5">
                           <input
                             type="text"
                             value={customWish}
-                            onChange={(e) => setCustomWish(e.target.value)}
-                            placeholder="e.g. iPhone 16, Scooty, Diamond Ring, Goa Trip..."
+                            onChange={(e) => {
+                              setCustomWish(e.target.value);
+                              setErrorMessage(null);
+                            }}
+                            placeholder="e.g. iPhone 16 Pro, Scooty keys, Trip to Paris..."
                             className="w-full text-xs font-sans px-3 py-2 rounded-lg bg-black/60 border border-[#d4af37]/40 text-[#fff8e7] placeholder-stone-500 focus:outline-none focus:border-[#d4af37]"
                           />
                         </div>
@@ -304,37 +299,27 @@ export default function GiftBox({ onNext }: GiftBoxProps) {
                 })}
               </div>
 
-              {/* Action Buttons: Submit to Brother via WhatsApp & Proceed */}
+              {/* Primary Action Button: Lock Demands & Email Official PDF to Brother */}
               <div className="w-full flex flex-col gap-2.5 pt-2 border-t border-[#d4af37]/20">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={handleSubmitDemands}
+                  onClick={handleSubmitAndProceed}
                   disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 text-white font-heading font-bold text-sm tracking-wider shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#d4af37] via-[#f2cb63] to-[#b89125] text-[#1a030b] font-heading font-bold text-sm tracking-wider shadow-2xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {isSaved ? (
                     <>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-100" />
-                      <span>Demands Sent to Brother! 🚀</span>
+                      <MailCheck className="w-4 h-4 text-[#1a030b]" />
+                      <span>Demands Locked &amp; Emailed to Brother! 🚀</span>
                     </>
                   ) : (
                     <>
-                      <MessageSquare className="w-4 h-4" />
-                      <Send className="w-4 h-4" />
-                      <span>Lock Demands &amp; Send on WhatsApp 📤</span>
+                      <CheckCircle2 className="w-4 h-4 text-[#1a030b]" />
+                      <span>Lock Demands &amp; Read Final Letter 📜</span>
+                      <ArrowRight className="w-4 h-4 text-[#1a030b]" />
                     </>
                   )}
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleProceed}
-                  className="w-full py-3 rounded-full bg-gradient-to-r from-[#d4af37] via-[#f2cb63] to-[#b89125] text-[#1a030b] font-heading font-bold text-xs sm:text-sm tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>Read Your Handwritten Letter 📜</span>
-                  <ArrowRight className="w-4 h-4 text-[#1a030b]" />
                 </motion.button>
               </div>
             </motion.div>
