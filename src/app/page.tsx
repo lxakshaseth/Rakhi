@@ -1,69 +1,187 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { SceneId } from '@/types';
+import ParticleCanvas from '@/components/common/ParticleCanvas';
+import MusicController from '@/components/common/MusicController';
+import ProgressBar from '@/components/common/ProgressBar';
+import LoadingScreen from '@/components/common/LoadingScreen';
+
+// Scenes
+import IntroScene from '@/components/scenes/IntroScene';
+import EnvelopeScene from '@/components/scenes/EnvelopeScene';
+import MemoryTimeline from '@/components/scenes/MemoryTimeline';
+import RakhiCeremony from '@/components/scenes/ceremony/RakhiCeremony';
+import SiblingQuiz from '@/components/scenes/SiblingQuiz';
+import EmotionalMessages from '@/components/scenes/EmotionalMessages';
+import GiftBox from '@/components/scenes/GiftBox';
+import FinalLetter from '@/components/scenes/FinalLetter';
+import FinalScene from '@/components/scenes/FinalScene';
+
+export default function RakhiSurprisePage() {
+  const [currentScene, setCurrentScene] = useState<SceneId>('intro');
+  const [isMusicPlaying, setIsMusicPlaying] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Initial luxury loading gate
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1400);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleStartExperience = () => {
+    setIsMusicPlaying(true);
+    setCurrentScene('envelope');
+  };
+
+  const handleReplay = () => {
+    setCurrentScene('intro');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main className="relative min-h-[100dvh] w-full bg-[#0d0104] text-[#fbf6ea] overflow-x-hidden flex flex-col items-center justify-center">
+      {/* Universal Floating Particle & Petal Canvas */}
+      <ParticleCanvas />
+
+      {/* Floating Story Progress Bar */}
+      <ProgressBar currentScene={currentScene} />
+
+      {/* Floating Glassmorphism Music Controller */}
+      <MusicController
+        isPlaying={isMusicPlaying}
+        onToggle={() => setIsMusicPlaying((prev) => !prev)}
+      />
+
+      {/* Mobile-first Framed Story Container (Optimized for 390x844 mobile viewport, luxurious on desktop) */}
+      <div className="w-full max-w-lg min-h-[100dvh] flex flex-col relative z-20 shadow-2xl bg-gradient-to-b from-[#120207] via-[#1c030c] to-[#0c0104]">
+        <AnimatePresence mode="wait">
+          {currentScene === 'intro' && (
+            <motion.div
+              key="intro"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <IntroScene onStart={handleStartExperience} />
+            </motion.div>
+          )}
+
+          {currentScene === 'envelope' && (
+            <motion.div
+              key="envelope"
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+              <EnvelopeScene onOpen={() => setCurrentScene('timeline')} />
+            </motion.div>
+          )}
+
+          {currentScene === 'timeline' && (
+            <motion.div
+              key="timeline"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
+            >
+              <MemoryTimeline onNext={() => setCurrentScene('ceremony')} />
+            </motion.div>
+          )}
+
+          {currentScene === 'ceremony' && (
+            <motion.div
+              key="ceremony"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
+            >
+              <RakhiCeremony onNext={() => setCurrentScene('quiz')} />
+            </motion.div>
+          )}
+
+          {currentScene === 'quiz' && (
+            <motion.div
+              key="quiz"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
+            >
+              <SiblingQuiz onNext={() => setCurrentScene('emotional')} />
+            </motion.div>
+          )}
+
+          {currentScene === 'emotional' && (
+            <motion.div
+              key="emotional"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
+            >
+              <EmotionalMessages onNext={() => setCurrentScene('gift')} />
+            </motion.div>
+          )}
+
+          {currentScene === 'gift' && (
+            <motion.div
+              key="gift"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
+            >
+              <GiftBox onNext={() => setCurrentScene('letter')} />
+            </motion.div>
+          )}
+
+          {currentScene === 'letter' && (
+            <motion.div
+              key="letter"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
+            >
+              <FinalLetter onNext={() => setCurrentScene('finale')} />
+            </motion.div>
+          )}
+
+          {currentScene === 'finale' && (
+            <motion.div
+              key="finale"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full min-h-[100dvh] flex flex-col"
+            >
+              <FinalScene onReplay={handleReplay} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </main>
   );
 }

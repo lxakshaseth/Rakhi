@@ -1,26 +1,192 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-royal: var(--font-cormorant), Georgia, serif;
+  --font-heading: var(--font-cinzel), serif;
+  --font-script: var(--font-great-vibes), cursive;
+  --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  --color-maroon-950: #0d0104;
+  --color-maroon-900: #19030a;
+  --color-maroon-800: #290611;
+  --color-maroon-700: #420a1c;
+  --color-maroon-600: #5e0d27;
+  
+  --color-gold-300: #fae19c;
+  --color-gold-400: #f2cb63;
+  --color-gold-500: #d4af37;
+  --color-gold-600: #b89125;
+  --color-gold-700: #8c6a12;
+  
+  --color-cream-50: #fefdfa;
+  --color-cream-100: #fbf6ea;
+  --color-cream-200: #f4ebd2;
+  --color-cream-300: #e8d7ae;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --font-royal: var(--font-cormorant), Georgia, serif;
+  --font-heading: var(--font-cinzel), serif;
+  --font-script: var(--font-great-vibes), cursive;
+  --font-sans: var(--font-jakarta), sans-serif;
+  
+  --color-maroon-950: #0d0104;
+  --color-maroon-900: #19030a;
+  --color-maroon-800: #290611;
+  --color-maroon-700: #420a1c;
+  --color-maroon-600: #5e0d27;
+  
+  --color-gold-300: #fae19c;
+  --color-gold-400: #f2cb63;
+  --color-gold-500: #d4af37;
+  --color-gold-600: #b89125;
+  --color-gold-700: #8c6a12;
+  
+  --color-cream-50: #fefdfa;
+  --color-cream-100: #fbf6ea;
+  --color-cream-200: #f4ebd2;
+  --color-cream-300: #e8d7ae;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Custom Base Styling */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
+}
+
+/* Luxury Indian Gold Metallic Text & Gradients */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fff2be 0%, #e6be60 30%, #b8861e 55%, #ffe699 80%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-text-soft {
+  background: linear-gradient(135deg, #ffffff 0%, #f7df99 40%, #e5b95a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rose-gold-gradient-text {
+  background: linear-gradient(135deg, #ffe4e6 0%, #fda4af 40%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border {
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.12);
+}
+
+.gold-border-glow {
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.25), inset 0 0 15px rgba(212, 175, 55, 0.1);
+}
+
+.glass-maroon {
+  background: rgba(35, 6, 16, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.glass-maroon-dark {
+  background: rgba(18, 3, 8, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.parchment-paper {
+  background-color: #f7f1e3;
+  background-image: 
+    radial-gradient(#e5d9c2 1px, transparent 1px),
+    radial-gradient(#e0d1b5 1px, #f7f1e3 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(184, 145, 37, 0.25),
+    inset 0 0 60px rgba(138, 102, 28, 0.15);
+}
+
+/* Radial Lighting Orbs */
+.ambient-glow-center {
+  background: radial-gradient(circle at 50% 50%, rgba(184, 14, 60, 0.25) 0%, rgba(94, 13, 39, 0.1) 45%, transparent 70%);
+}
+
+.ambient-gold-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.2) 0%, rgba(184, 145, 37, 0.05) 50%, transparent 70%);
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes diyaFlicker {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.9));
+  }
+  25% {
+    transform: scale(1.08, 0.95) translateY(-1px);
+    filter: drop-shadow(0 0 14px rgba(245, 158, 11, 1));
+  }
+  50% {
+    transform: scale(0.96, 1.04) translateY(1px);
+    filter: drop-shadow(0 0 10px rgba(251, 146, 60, 0.85));
+  }
+  75% {
+    transform: scale(1.04, 0.98) translateY(-0.5px);
+    filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.95));
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.animate-diya {
+  animation: diyaFlicker 2s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #120207;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.6);
 }
