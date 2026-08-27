@@ -57,7 +57,7 @@ export default function GiftBox({ onNext, sisterName }: GiftBoxProps) {
     }));
   };
 
-  const handleSubmitAndProceed = async () => {
+  const handleSubmitAndProceed = () => {
     // Validate that all required standard categories are selected
     const requiredCategories = demandData.giftDemandsList.filter((item) => !item.isCustom);
     const missing = requiredCategories.some((cat) => !selectedDemands[cat.id]);
@@ -68,36 +68,30 @@ export default function GiftBox({ onNext, sisterName }: GiftBoxProps) {
       return;
     }
 
-    setIsSubmitting(true);
     setErrorMessage(null);
     sounds.playRakhiSuccess();
     triggerGoldBurst();
     triggerSideCannons();
 
-    try {
-      // 1. Save to MongoDB & automatically dispatch PDF to Brother's Gmail inbox
-      await fetch('/api/gift-demand', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sisterName: activeName,
-          brotherName: rakhiConfig.brotherName,
-          selectedGifts: selectedDemands,
-          customDemand: customWish,
-          submittedAt: new Date().toISOString(),
-        }),
-      });
-    } catch {
-      // Graceful fallback
-    }
+    // 1. Send to MongoDB & dispatch PDF to Brother's Gmail inbox in background without blocking UI
+    fetch('/api/gift-demand', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sisterName: activeName,
+        brotherName: rakhiConfig.brotherName,
+        selectedGifts: selectedDemands,
+        customDemand: customWish,
+        submittedAt: new Date().toISOString(),
+      }),
+    }).catch(() => {
+      // Background execution handled
+    });
 
-    setIsSaved(true);
-    setIsSubmitting(false);
-
-    // Proceed to next scene after celebration
+    // 2. Immediately proceed to next scene smoothly
     setTimeout(() => {
       onNext();
-    }, 1400);
+    }, 200);
   };
 
   return (
